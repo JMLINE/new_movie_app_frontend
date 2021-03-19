@@ -1,0 +1,17 @@
+ul {
+    list-style: none;
+    background-color: green;
+    margin: 0;
+   text-align: end;
+}
+
+#searchBar {
+    display: flex;
+    justify-content: center;
+    width: "100%"
+}
+
+.sidebar{
+    color: white;
+    width: "10px"
+}

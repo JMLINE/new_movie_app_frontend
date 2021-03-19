@@ -1,0 +1,8 @@
+#movieData{
+    list-style: none; 
+}
+
+.searchBar{
+    display: flex;
+    justify-content: center;
+}
