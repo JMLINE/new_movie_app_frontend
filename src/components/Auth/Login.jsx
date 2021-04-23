@@ -1,13 +1,20 @@
 import React, { useState } from "react";
-import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { Form, FormGroup, Label, Input } from "reactstrap";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 function Login(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     fetch(`http://localhost:3000/user/signin`, {
       method: "POST",
       body: JSON.stringify({
@@ -26,50 +33,84 @@ function Login(props) {
           setErrorMessage(data.error);
         } else {
           props.updateToken(data.sessionToken);
-          setErrorMessage("");
+          setErrorMessage(false);
         }
       });
   };
+
+  function clearError() {
+    setErrorMessage(false);
+  }
   return (
     <div>
-      <h1>Login</h1>
-      <Form onSubmit={handleSubmit}>
-        {errorMessage === "" ? (
-          <> </>
-        ) : (
-          <div
-            style={{ background: "red" }}
-            className="alert alert-danger"
-            role="alert"
-          >
-            Username and password combination is incorrect. Please try again.
-          </div>
-        )}
-        <FormGroup>
-          <Label htmlFor="username">Username</Label>
-          <Input
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
+      <Dialog
+        open={props.open}
+        onClose={props.handleClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title" style={{ textAlign: "center" }}>
+          Sign in to your account
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText style={{ textAlign: "center" }}>
+            Welcome back!
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Username"
+            type="username"
+            fullWidth
+            onChange={(e) => setUsername(e.target.value)}
             name="username"
             value={username}
+            required
           />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            name="password"
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Password"
             type="password"
+            fullWidth
+            onChange={(e) => setPassword(e.target.value)}
+            name="password"
             value={password}
+            required
           />
-        </FormGroup>
-        <Button color="dark" type="submit">
-          Login{" "}
-        </Button>
-      </Form>
+        </DialogContent>
+        {localStorage.setItem("username", username)}
+
+        {errorMessage === false ? (
+          <> </>
+        ) : (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Username or Password is incorrect. Please try again.
+          </Alert>
+        )}
+        <DialogActions>
+          <Button
+            onClick={() => {
+              props.handleClose();
+              clearError();
+            }}
+            color="primary"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              // props.handleClose();
+              handleSubmit();
+            }}
+            color="primary"
+          >
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

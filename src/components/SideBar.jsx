@@ -1,5 +1,4 @@
-import React from "react";
-import Test from "./Test";
+import React, { useState } from "react";
 import Watchlist from "./Watchlist";
 import {
   BrowserRouter as Router,
@@ -9,82 +8,159 @@ import {
   Redirect,
 } from "react-router-dom";
 import "./SideBar.css";
-import Button from "@material-ui/core/Button";
-import Login from "./Auth/Login";
-import Register from "./Auth/Register";
 import HomeScreen from "./HomeScreen";
-import HomeFetch from "./HomeFetch";
+import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import PersonSharpIcon from "@material-ui/icons/PersonSharp";
+import HomeIcon from "@material-ui/icons/Home";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import AppsIcon from "@material-ui/icons/Apps";
+import Grid from "@material-ui/core/Grid";
+import History from "./History";
+import HistoryIcon from "@material-ui/icons/History";
 
+const StyledMenu = withStyles({
+  paper: {},
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "center",
+    }}
+    {...props}
+  />
+));
+const StyledMenuItem = withStyles((theme) => ({
+  root: {},
+}))(MenuItem);
 const SideBar = (props) => {
+  let userName = localStorage.getItem("username");
+
   return (
     <>
       <Router>
         <div className="sidebar">
           <div className="sidebar-list-styling">
-            {props.token === localStorage.getItem("token") ? (
-              <div>
-                <ul className="sidebar-list list-unstyled">
-                  <li>
-                    <Link to="/Watchlist">Watchlist</Link>
-                  </li>
-                  <li>
-                    <Link to="/test">Test</Link>
-                  </li>
-                  <li>
-                    <Link to="/home">Home</Link>
-                  </li>
-                  <li>
+            <div>
+              <Grid container>
+                <Grid
+                  item
+                  xs={12}
+                  sm={12}
+                  style={{
+                    // width: "auto",
+                    backgroundColor: "red",
+                    textAlign: "right",
+                  }}
+                >
+                  <div class="dropdown">
                     <Button
-                      style={{ color: "black" }}
-                      color="danger"
-                      onClick={props.clickLogout}
+                      class="dropbtn"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        backgroundColor: "red",
+                      }}
                     >
-                      Logout
+                      {" "}
+                      <ListItemIcon>
+                        <b>
+                          <PersonSharpIcon fontSize="large" />
+                        </b>
+                      </ListItemIcon>
+                      <ListItemText>
+                        <p>
+                          {userName.length >= 17 ? (
+                            <p> {userName.substr(0, 17)}... </p>
+                          ) : (
+                            userName
+                          )}
+                        </p>
+                      </ListItemText>
                     </Button>
-                    <Redirect to="/home" />
-                  </li>
-                </ul>
-                <p id="searchBar">
-                  <HomeFetch token={props.token} />
-                </p>
-              </div>
-            ) : (
-              <div>
-                <ul>
-                  <Link to="/login">Login</Link>
-                  &nbsp;
-                  <Link to="/register">Register</Link>
-                </ul>
-              </div>
-            )}
-          </div>
 
-          <div className="sidebar-route">
-            <Switch>
-              <Route exact path="/test">
-                <Test />
-              </Route>
-              <Route exact path="/Watchlist">
-                <Watchlist token={props.token} />
-              </Route>
-              <Route exact path="/home">
-                <HomeScreen />
-              </Route>
-            </Switch>
+                    <div
+                      class="dropdown-content"
+                      style={{ backgroundColor: "red" }}
+                    >
+                      <div className="homeLink">
+                        <StyledMenuItem>
+                          <ListItemIcon>
+                            <HomeIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>
+                            {" "}
+                            <Link to="/home">Home</Link>
+                          </ListItemText>
+                        </StyledMenuItem>
+                      </div>
+                      <div className="watchLink">
+                        <StyledMenuItem>
+                          <ListItemIcon>
+                            <AppsIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>
+                            <Link to="/watchlist">Watchlist </Link>
+                          </ListItemText>
+                        </StyledMenuItem>
+                      </div>
 
-            <div className="auth">
-              {props.token === localStorage.getItem("token") ? (
-                ""
-              ) : (
-                <Switch>
-                  <Route exact path="/login">
-                    <Login updateToken={props.updateToken} />
-                  </Route>
-                  <Route exact path="/register">
-                    <Register updateToken={props.updateToken} />
-                  </Route>
-                </Switch>
-              )}
+                      <div className="historyLink">
+                        <StyledMenuItem>
+                          <ListItemIcon>
+                            <HistoryIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>
+                            {" "}
+                            <Link to="/history">History</Link>
+                          </ListItemText>
+                        </StyledMenuItem>
+                      </div>
+                      <div className="logoutLink">
+                        <StyledMenuItem>
+                          <ListItemIcon>
+                            <ExitToAppIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>
+                            <Link onClick={props.clickLogout}>Logout</Link>
+                            <Redirect to="/home" />
+                          </ListItemText>
+                        </StyledMenuItem>
+                      </div>
+                    </div>
+                  </div>
+                </Grid>
+
+                {props.token === localStorage.getItem("token") ? (
+                  <Grid item xs={12} md={12}>
+                    <div>
+                      <Switch>
+                        <Route exact path="/watchlist">
+                          <Watchlist token={props.token} />
+                        </Route>
+                        <Route exact path="/home">
+                          <HomeScreen token={props.token} />
+                        </Route>{" "}
+                        <Route exact path="/history">
+                          <History token={props.token} />
+                        </Route>
+                      </Switch>
+                    </div>
+                  </Grid>
+                ) : (
+                  ""
+                )}
+              </Grid>
             </div>
           </div>
         </div>

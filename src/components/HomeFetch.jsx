@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import "./HomeFetch.css";
-import HomeFetchCard from "../components/HomeFetchCard";
 import Button from "@material-ui/core/Button";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import Grid from "@material-ui/core/Grid";
+import Snackbar from "@material-ui/core/Snackbar";
+import HomeFetchModal from "../components/HomeFetchModal";
 
 let ApiKey = "9c95d3df";
 
@@ -15,14 +16,24 @@ function HomeFetch(props) {
   const [rated, setRated] = useState("");
   const [plot, setPlot] = useState("");
   const [poster, setPoster] = useState("");
+  const [directedBy, setDirectedBy] = useState("");
   const [rating, setRating] = useState("");
   const [ratingSource, setRatingSource] = useState("");
+  const [actors, setActors] = useState("");
+  const [writtenBy, setWrittenBy] = useState("");
   const [userSearch, setUserSearch] = useState("");
+  const [viewed, setViewed] = useState();
   const [errorMessage, setErrorMessage] = useState(false);
   const [postSuccess, setPostSuccess] = useState(false);
   const [postError, setPostError] = useState(false);
   const [blankCard, setBlankCard] = useState(true);
-
+  const [open2, setOpen2] = React.useState(true);
+  const [state, setState] = React.useState({
+    open: true,
+    vertical: "bottom",
+    horizontal: "center",
+  });
+  const { vertical, horizontal, open } = state;
   const searchFetch = (e) => {
     e.preventDefault();
     fetch(`http://www.omdbapi.com/?apikey=${ApiKey}&t=${userSearch}`)
@@ -33,9 +44,15 @@ function HomeFetch(props) {
         setRated(data.Rated);
         setPlot(data.Plot);
         setPoster(data.Poster);
+        setDirectedBy(data.Director);
+        setActors(data.Actors);
+        setWrittenBy(data.Writer);
         setRating(data.Ratings[0].Value);
         setRatingSource(data.Ratings[0].Source);
+        setViewed(false);
+
         setBlankCard(false);
+        setOpen2(true);
       })
       .catch(function (error) {
         console.log(error);
@@ -60,20 +77,23 @@ function HomeFetch(props) {
           year: year,
           rated: rated,
           poster: poster,
+          plot: plot,
+          rating: rating,
+          ratingSource: ratingSource,
+          actors: actors,
+          writtenBy: writtenBy,
+          viewed: viewed,
         },
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+
         if (data.message === "No Token Provided") {
           setPostError(true);
           return;
         }
-        setTitle("");
-        setYear("");
-        setRated("");
-        setPoster("");
         setPostSuccess(true);
       })
       .catch(function (error) {
@@ -91,7 +111,7 @@ function HomeFetch(props) {
       setErrorMessage(false);
       setPostSuccess(false);
       setPostError(false);
-    }, 5000);
+    }, 6000);
   }
   function clearSearch() {
     setUserSearch("");
@@ -101,19 +121,32 @@ function HomeFetch(props) {
     root: {
       "& > *": {
         margin: theme.spacing(1),
-        width: "50ch",
+        width: "100%",
         flexGrow: 1,
         align: "center",
       },
     },
   }));
 
+  const handleClick = (newState) => () => {
+    setState({ open: true, ...newState });
+  };
+
+  const handleOpen = () => {
+    setOpen2(true);
+  };
+
+  const handleClose2 = () => {
+    setOpen2(false);
+  };
+
   const classes = useStyles();
+
   return (
     <div className="searchBar">
       <Grid container spacing={3}>
-        <Grid item xs={3}></Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}></Grid>
+        <Grid item xs={11} sm={11} md={4}>
           <form className={classes.root} noValidate autoComplete="off">
             <TextField
               id="outlined-basic"
@@ -140,43 +173,69 @@ function HomeFetch(props) {
             </Button>
           </form>
         </Grid>
-        <Grid item xs={3}></Grid>
-        <Grid item xs={3}></Grid>
+        <Grid item xs={4}></Grid>
+
         <Grid item xs={6}>
           {errorMessage === true ? (
-            <Alert style={{ width: "80%" }} severity="error">
-              <br></br>
-              <AlertTitle>Error</AlertTitle>
-              Movie is not in our database. Please check your spelling and try
-              again
-            </Alert>
+            <Snackbar
+              anchorOrigin={{ vertical, horizontal }}
+              open={open}
+              onClose={handleClick}
+              key={vertical + horizontal}
+              autoHideDuration={1000}
+            >
+              <Alert severity="warning">
+                Error. Please Check Spelling and Try Again.
+              </Alert>
+            </Snackbar>
           ) : (
             ""
           )}
 
           {postSuccess === true ? (
-            <Alert style={{ width: "80%" }} severity="success">
-              <AlertTitle>Success</AlertTitle>
-              Success
-            </Alert>
+            <Snackbar
+              anchorOrigin={{ vertical, horizontal }}
+              open={open}
+              onClose={handleClick}
+              key={vertical + horizontal}
+              autoHideDuration={1000}
+            >
+              <Alert severity="success">Movie Successfully Added!</Alert>
+            </Snackbar>
           ) : (
             ""
           )}
 
           {postError === true ? (
-            <Alert style={{ width: "80%" }} severity="error">
-              <AlertTitle>Error</AlertTitle>
-              Must login to save to Watchlist!
-            </Alert>
+            <div>
+              <Snackbar
+                anchorOrigin={{ vertical, horizontal }}
+                open={open}
+                onClose={handleClick}
+                key={vertical + horizontal}
+                autoHideDuration={1000}
+              >
+                <Alert severity="error">
+                  Must sign in to add to watchlist!
+                </Alert>
+              </Snackbar>
+            </div>
           ) : (
             ""
           )}
           {props.token === localStorage.getItem("token") &&
           postError === true ? (
-            <Alert style={{ width: "48%" }} severity="error">
-              <AlertTitle>Error</AlertTitle>
-              An Error Occured. Please try again.
-            </Alert>
+            <Snackbar
+              anchorOrigin={{ vertical, horizontal }}
+              open={open}
+              onClose={handleClick}
+              key={vertical + horizontal}
+              autoHideDuration={1000}
+            >
+              <Alert severity="error">
+                An Error Occured. Please Try Again.
+              </Alert>
+            </Snackbar>
           ) : (
             ""
           )}
@@ -185,13 +244,16 @@ function HomeFetch(props) {
           ""
         ) : (
           <div>
-            <HomeFetchCard
+            <HomeFetchModal
               title={title}
               year={year}
               rated={rated}
               plot={plot}
               poster={poster}
               rating={rating}
+              directedBy={directedBy}
+              actors={actors}
+              writtenBy={writtenBy}
               ratingSource={ratingSource}
               errorMessage={errorMessage}
               userSearch={userSearch}
@@ -199,6 +261,9 @@ function HomeFetch(props) {
               postSuccess={postSuccess}
               clearData={clearData}
               clearSearch={clearSearch}
+              handleOpen={handleOpen}
+              handleClose2={handleClose2}
+              open2={open2}
             />
           </div>
         )}
@@ -206,4 +271,5 @@ function HomeFetch(props) {
     </div>
   );
 }
+
 export default HomeFetch;

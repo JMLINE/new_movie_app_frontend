@@ -1,8 +1,9 @@
+
 ul {
     list-style: none;
-    background-color: green;
-    margin: 0;
-   text-align: end;
+    background-color: red;
+  
+   text-align: end; 
 }
 
 #searchBar {
@@ -11,7 +12,48 @@ ul {
     width: "100%"
 }
 
-.sidebar{
+.dropbtn {
     color: white;
-    width: "10px"
-}
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    padding-right: 4em;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    background-color: red;
+  }
+ 
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: red;
+    z-index: 1;
+    
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 8em;
+
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content .watchLink:hover {background-color: darkred;}
+  .dropdown-content .homeLink:hover {background-color: darkred;}
+  .dropdown-content .logoutLink:hover {background-color: darkred;}
+  .dropdown-content .historyLink:hover {background-color: darkred;}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {display: block;}
+  
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+  /* .dropdown:hover .dropbtn {background-color: #3e8e41;} */
+
+

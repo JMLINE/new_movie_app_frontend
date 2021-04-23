@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import HomeFetch from "./components/HomeFetch";
-import Navbar from "./components/Navbar";
 import Auth from "./components/Auth/Auth";
-import Watchlist from "./components/Watchlist";
 import SideBar from "./components/SideBar";
 import HomeScreen from "./components/HomeScreen";
+import "./App.css";
 
 function App() {
   const [sessionToken, setSessionToken] = useState("");
@@ -17,7 +15,6 @@ function App() {
   const updateToken = (newToken) => {
     localStorage.setItem("token", newToken);
     setSessionToken(newToken);
-    console.log(newToken);
   };
   const clearToken = () => {
     localStorage.clear();
@@ -35,7 +32,7 @@ function App() {
       </>
     ) : (
       <>
-        <Auth updateToken={updateToken} /> <HomeFetch token={sessionToken} />
+        <Auth updateToken={updateToken} /> {/* <HomeFetch /> */}{" "}
       </>
     );
   };
@@ -44,15 +41,10 @@ function App() {
     <>
       <div>
         {" "}
-        {/* <SideBar
-                      token={sessionToken}
-                      updateToken={updateToken}
-                      clickLogout={clearToken}
-                    /> */}{" "}
         {protectedViews()}{" "}
         {sessionToken !== localStorage.getItem("token") ? (
           <div>
-            <HomeScreen />
+            <HomeScreen token={sessionToken} />{" "}
           </div>
         ) : (
           ""

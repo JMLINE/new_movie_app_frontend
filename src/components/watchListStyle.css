@@ -1,12 +1,15 @@
-.watchListCards2{
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    text-align: center;
-    
-}
 
 #watchlistTitle{
     display: flex;
     justify-content: center;
+    color: black;
+    padding: 1em;
 }
+
+#watchlistChart{
+    list-style: none;
+}
+
+#watchedButton:hover {background-color: lightgreen;}
+#deleteButton:hover {background-color: rgb(247, 66, 66);}
+

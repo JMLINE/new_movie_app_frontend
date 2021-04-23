@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Register from "./Register";
+
 import Login from "./Login";
-import "./authStyle.css";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,32 +10,76 @@ import {
   Link,
   Redirect,
 } from "react-router-dom";
-
-import { Container, Row, Col } from "reactstrap";
+import Button from "@material-ui/core/Button";
 
 const Auth = (props) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <div className="auths">
+    <div
+      className="auths"
+      style={{
+        backgroundColor: "red",
+        display: "flex",
+        justifyContent: "flex-end",
+        flexDirection: "row",
+        height: "5em",
+      }}
+    >
       <Router>
-        <ul className="sidebar-list list-unstyled">
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-          <li>
-            <Link to="/register">Register</Link>
-          </li>
-        </ul>
+        <Link
+          to="/login"
+          style={{ textDecoration: "none" }}
+          onClick={handleClickOpen}
+        >
+          <Button
+            variant="outlined"
+            style={{ color: "yellow" }}
+            href="#outlined-buttons"
+          >
+            Login
+          </Button>
+        </Link>
+
+        <Link
+          to="/register"
+          style={{ textDecoration: "none" }}
+          onClick={handleClickOpen}
+        >
+          <Button type="button" style={{ color: "white" }}>
+            Register
+          </Button>
+        </Link>
 
         <Switch>
           <Route exact path="/login">
-            <Login updateToken={props.updateToken} />
+            <Login
+              updateToken={props.updateToken}
+              handleClickOpen={handleClickOpen}
+              handleClose={handleClose}
+              open={open}
+            />
           </Route>
           <Route exact path="/register">
-            <Register updateToken={props.updateToken} />
+            <Register
+              updateToken={props.updateToken}
+              handleClickOpen={handleClickOpen}
+              handleClose={handleClose}
+              open={open}
+            />
           </Route>
         </Switch>
       </Router>
     </div>
   );
 };
+
 export default Auth;
